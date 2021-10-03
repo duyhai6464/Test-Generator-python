@@ -1,10 +1,13 @@
+from CreateInput import N
 import os
 import subprocess
 
+solutionPath = '.\\Solutions\\'
+testPath = '.\\test\\'
 
-def runCpp(fileIn, fileOut, file_name='solve.exe'):
-    with open('test/' + fileOut, 'w'):
-        os.system(file_name + ' < ' + fileIn + ' > '+fileOut)
+
+def runCpp(fileIn, fileOut, file_name):
+    os.system(file_name + ' < ' + fileIn + ' > '+fileOut)
 
 
 def runPy():
@@ -14,15 +17,16 @@ def runPy():
 if __name__ == '__main__':
     CppSolve = 'solve.cpp'
 
-    ListFile = [f[:-3] for f in os.listdir('test/') if f.endswith('.in')]
-
     if CppSolve.endswith('.cpp'):
-        ExeSolve = CppSolve[:-4] + '.exe'
-        os.system('g++ ' + CppSolve + ' -o ' + ExeSolve)
-        print(CppSolve + ' -> ' + ExeSolve)
+        ExeSolve = CppSolve[:-4]
+        os.system('g++ ' + solutionPath + CppSolve +
+                  ' -o ' + solutionPath + ExeSolve)
 
-        for name in ListFile:
-            runCpp(name + '.in', name + '.out', ExeSolve)
+        print(CppSolve + ' ----> ' + ExeSolve + '.exe')
+
+        for name in [str(i + 1) for i in range(N)]:
+            runCpp(testPath + name + '.in',
+                   testPath + name + '.out', solutionPath + ExeSolve)
             print('Created ' + name + '.out' + '  <----  ' + name + '.in')
 
     elif CppSolve.endswith('.py'):

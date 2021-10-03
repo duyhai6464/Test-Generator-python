@@ -16,14 +16,46 @@
 #define Modd (ll)(1e9 + 7)
 
 using namespace std;
-
+template <typename type>
+istream &operator>>(istream &in, vector<type> &a)
+{
+    for (int i = 0; i < a.size(); i++)
+        in >> a[i];
+    return in;
+}
+template <typename type>
+ostream &operator<<(ostream &out, const vector<type> &a)
+{
+    for (int i = 0; i < a.size(); i++)
+        out << a[i] << " ";
+    return out;
+}
+template <typename t1, typename t2>
+istream &operator>>(istream &in, pair<t1, t2> &a)
+{
+    in >> a.first >> a.second;
+    return in;
+}
 bool Multitests = 1;
-ll test = 1, n, m, k, l, r, x, y;
+ll test = 1;
 
 void Solve()
 {
-    cin >> n >> m;
-    cout << n + m << endl;
+    ll n, b[2] = {0};
+    cin >> n;
+    vector<ll> a(n);
+    cin >> a;
+    sort(allr(a));
+    for (int i = 0; i < n; i++)
+        b[i % 2] += (a[i] % 2 == i % 2) ? a[i] : 0;
+
+    if (b[0] > b[1])
+        cout << "Aco";
+    else if (b[0] < b[1])
+        cout << "Kbich";
+    else
+        cout << "Tie";
+    cout << endl;
 }
 
 int main()
