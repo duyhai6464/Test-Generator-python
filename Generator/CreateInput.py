@@ -1,63 +1,122 @@
 import sys
-from PyRandom import *
+import random
 
-N = 15  # number of test cases
+
+def randInt(a, b):
+    if int(a) > int(b): a, b = b, a
+    return random.randint(int(a), int(b))
+
+
+def randBitInt(bits):
+    return random.getrandbits(int(bits))
+
+
+def randBit(bits):
+    return bin(random.getrandbits(int(bits)))[2:]
+
+
+def randInRange(begin, end, step=1):
+    if (int(begin) - int(end)) * int(step) > 0:
+        begin, end = end, begin
+    ar = [value for value in range(int(begin), int(end), int(step))]
+    random.shuffle(ar)
+    return ar
+
+
+def randCharLower():
+    # char to int: ord('a') = 97, ord('z') = 122
+    return chr(random.randint(ord('a'), ord('z')))
+
+
+def randChar():
+    # a - z & A - Z
+    c = [x for x in range(ord('A'), ord('Z') + 1)] + [x for x in range(ord('a'), ord('z') + 1)]
+    return chr(random.choice(c))
+
+
+def Choice(array):
+    return random.choice(array)
+
+
+def Shuffle(array):
+    random.shuffle(array)
+    return array
 
 
 def example():
-    print(3)
-    print(4)
-    print(5, 2, 7, 3)
-    print(3)
-    print(1, 2, 3)
-    print(4)
-    print(2, 2, 2, 2)
-
-
-def easy():
-    t = 10000
-    print(t)
-    for _ in range(t):
-        n = randInt(1, 10)
-        a = [randInt(1, 10) for i in range(n)]
-        print(n)
-        print(*a)
-
-
-def medium():
-    t = 100
-    print(t)
-    for _ in range(t):
-        n = randInt(1000, 2000)
-        a = [randInt(1000, 10000) for i in range(n)]
-        print(n)
-        print(*a)
-
-
-def hard():
-    t = randInt(1, 4)
-    print(t)
-    for _ in range(t):
-        n = 200000 // t
-        if _ == 0:
-            a = [randInt(100000, 100100) for i in range(n)]
-        elif _ == 1:
-            a = [randInt(100000000, 1000000000) for i in range(n)]
+    n = randInt(5e3, 1e4)
+    q = randInt(5e3, 1e4)
+    print(n, q)
+    arr = [randInt(-1e4, 1e4) for _ in range(n)]
+    print(*arr)
+    for _ in range(q):
+        query_type = Choice(["sum", "add"]) if _ != q - 1 else "sum"
+        l = randInt(1, n)
+        r = randInt(l, n)
+        if query_type == "sum":
+            print(query_type, l, r)
         else:
-            a = [3 if i < 2*n/5 else 2 for i in range(n)]
-        print(n)
-        print(*a)
+            x = randInt(-1e3, 1e3)
+            print(query_type, l, r, x)
 
+def check_time_limit():
+    n = randInt(1e5, 2e5)
+    q = randInt(1e5, 2e5)
+    print(n, q)
+    arr = [randInt(-1e9, 1e9) for _ in range(n)]
+    print(*arr)
+    for _ in range(q):
+        query_type = Choice(["sum", "add"]) if _ != q - 1 else "sum"
+        l = randInt(1, n // 10)
+        r = randInt(9 * n // 10, n)
+        if query_type == "sum":
+            print(query_type, l, r)
+        else:
+            x = randInt(-1e9, 1e9)
+            print(query_type, l, r, x)
 
+def hard_test_case():
+    n = 2 * 10 ** 5
+    q = 2 * 10 ** 5
+    print(n, q)
+    arr = [randInt(-1e9, 1e9) for _ in range(n)]
+    print(*arr)
+    last_l, last_r = 1, n
+    for _ in range(q):
+        l = randInt(last_l, last_r)
+        r = randInt(l, (l + n // 2) % n + 1)
+        last_l, last_r = l, r
+        if _ % 2:
+            print("sum", l, r)
+        else:
+            x = randInt(-1e9, 1e9)
+            print("add", l, r, x)
+
+def generate_test_cases(func):
+    """
+    first line is n, q (1 <= n, q <= 2*10^5)
+    second line is n integers of the array a (1 <= a[i] <= 10^9)
+    next q lines are queries of the form "sum l r" or "add l r x"
+    where l, r are the range of the query (1 <= l <= r <= n) and x is the value to add (-10^9 <= x <= 10^9)
+     - "sum l r" means to calculate the sum of the subarray a[l...r]
+     - "add l r x" means to add x to each element in the subarray a[l...r]
+    """
+    filename = f'{test_case_index}.in'
+    with open('test/' + filename, 'w') as FileOutput:
+        print(f'Generating test case {test_case_index}...{filename}')
+        sys.stdout = FileOutput
+        func()# Generate the test case
+        sys.stdout = sys.__stdout__
+
+test_case_index = 1
 if __name__ == '__main__':
-    for n in range(N):
-        with open('test/' + str(n + 1) + '.in', 'w') as FileOut:
-            sys.stdout = FileOut
-            if n == 0:
-                example()
-            elif n <= N/3:
-                easy()
-            elif n <= 2*N/3:
-                medium()
-            else:
-                hard()
+    while test_case_index < 3:
+        generate_test_cases(example)
+        test_case_index += 1
+    while test_case_index < 5:
+        generate_test_cases(check_time_limit)
+        test_case_index += 1
+    while test_case_index < 7:
+        generate_test_cases(hard_test_case)
+        test_case_index += 1
+    
