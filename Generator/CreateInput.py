@@ -47,13 +47,11 @@ def example():
     n = randInt(5e3, 1e4)
     q = randInt(5e3, 1e4)
     print(n, q)
-    arr = [randInt(-1e4, 1e4) for _ in range(n)]
-    print(*arr)
     for _ in range(q):
-        query_type = Choice(["sum", "add"]) if _ != q - 1 else "sum"
+        query_type = randInt(0, 1) if _ != q - 1 else 1
         l = randInt(1, n)
         r = randInt(l, n)
-        if query_type == "sum":
+        if query_type == 1:
             print(query_type, l, r)
         else:
             x = randInt(-1e3, 1e3)
@@ -63,13 +61,11 @@ def check_time_limit():
     n = randInt(1e5, 2e5)
     q = randInt(1e5, 2e5)
     print(n, q)
-    arr = [randInt(-1e9, 1e9) for _ in range(n)]
-    print(*arr)
     for _ in range(q):
-        query_type = Choice(["sum", "add"]) if _ != q - 1 else "sum"
+        query_type = randInt(0, 1) if _ != q - 1 else 1
         l = randInt(1, n // 10)
         r = randInt(9 * n // 10, n)
-        if query_type == "sum":
+        if query_type == 1:
             print(query_type, l, r)
         else:
             x = randInt(-1e9, 1e9)
@@ -79,27 +75,25 @@ def hard_test_case():
     n = 2 * 10 ** 5
     q = 2 * 10 ** 5
     print(n, q)
-    arr = [randInt(-1e9, 1e9) for _ in range(n)]
-    print(*arr)
     last_l, last_r = 1, n
     for _ in range(q):
         l = randInt(last_l, last_r)
         r = randInt(l, (l + n // 2) % n + 1)
+        if l > r: l, r = r, l
         last_l, last_r = l, r
         if _ % 2:
-            print("sum", l, r)
+            print(1, l, r)
         else:
             x = randInt(-1e9, 1e9)
-            print("add", l, r, x)
+            print(0, l, r, x)
 
 def generate_test_cases(func):
     """
-    first line is n, q (1 <= n, q <= 2*10^5)
-    second line is n integers of the array a (1 <= a[i] <= 10^9)
+    first line is n, q (1 <= n, q <= 2*10^5) n integers of the array a initially 0
     next q lines are queries of the form "sum l r" or "add l r x"
     where l, r are the range of the query (1 <= l <= r <= n) and x is the value to add (-10^9 <= x <= 10^9)
-     - "sum l r" means to calculate the sum of the subarray a[l...r]
-     - "add l r x" means to add x to each element in the subarray a[l...r]
+     - "1 l r" means to calculate the sum of the subarray a[l...r]
+     - "0 l r x" means to add x to each element in the subarray a[l...r]
     """
     filename = f'{test_case_index}.in'
     with open('test/' + filename, 'w') as FileOutput:
@@ -108,7 +102,7 @@ def generate_test_cases(func):
         func()# Generate the test case
         sys.stdout = sys.__stdout__
 
-test_case_index = 1
+test_case_index = 2
 if __name__ == '__main__':
     while test_case_index < 3:
         generate_test_cases(example)

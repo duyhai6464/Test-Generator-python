@@ -6,8 +6,10 @@ solutionPath = '.\\Solutions\\' # path to .py files of solutions(BruteForce.py, 
 testPath = '.\\test\\'# path to .in and .out files of test cases
 
 # name of the solution file to run, without extension
-# solveFileName =  'Solve'
-solveFileName =  'BruteForce'
+solveFileName =  'SegmentTree'
+# solveFileName =  'BruteForce'
+
+TIME_LIMIT = 10 # seconds
 
 if __name__ == '__main__':
     # make sure solve file exists
@@ -19,7 +21,7 @@ if __name__ == '__main__':
     testFiles = [f for f in os.listdir(testPath) if f.endswith('.in')]
     for testFile in testFiles:
         print('Running test case:',  testFile, end='|')
-        # run the solution file with input and check output vs expected output, if time is more than 5 second print "Time limit exceeded"
+        # run the solution file with input and check output vs expected output, if time is more than TIME_LIMIT second print "Time limit exceeded"
         solutionFile = os.path.join(solutionPath, solveFileName + '.py')
         testinputFile = os.path.join(testPath, testFile)
         testoutputFile = os.path.join(testPath, testFile.replace('.in', '.out'))
@@ -36,7 +38,7 @@ if __name__ == '__main__':
                     # skip empty line in expected output
                     if not expected.strip(): continue
                     # timeout check
-                    if time.time() - starttime > 5:  # Assuming TIME_LIMIT is 5 seconds
+                    if time.time() - starttime > TIME_LIMIT:
                         process.kill()
                         print(f"TLE line {i} time {time.time() - starttime:.4f}")
                         exit(1)
@@ -44,7 +46,7 @@ if __name__ == '__main__':
                     output = process.stdout.readline() if process.stdout else ""
 
                     if not output:
-                        print("FAILED: thiếu output")
+                        print(f"FAILED: thiếu output ở line {i}, expected: '{expected.strip()}'")
                         process.kill()
                         exit(1)
 

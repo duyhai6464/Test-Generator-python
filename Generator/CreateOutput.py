@@ -6,7 +6,9 @@ solutionPath = '.\\Solutions\\' # path to .py files of solutions(BruteForce.py, 
 testPath = '.\\test\\'# path to .in and .out files of test cases
 # name of the solution file to run, without extension
 # solveFileName =  'BruteForce'
-solveFileName =  'Solve'
+solveFileName =  'FenwickTree'
+
+TIME_LIMIT = 5 # seconds
 
 if __name__ == '__main__':
     # make sure solve file exists
@@ -17,7 +19,7 @@ if __name__ == '__main__':
     # find all file in test folder end with .in
     testFiles = [f for f in os.listdir(testPath) if f.endswith('.in')]
     for testFile in testFiles:
-        print('Running test case:',  testFile, end='|')
+        print('Generating output for test case:',  testFile, end='|')
         # run the solution file and redirect input and output
         solutionFile = os.path.join(solutionPath, solveFileName + '.py')
         testinputFile = os.path.join(testPath, testFile)
@@ -25,10 +27,10 @@ if __name__ == '__main__':
         with open(testoutputFile, 'w') as output_f, open(testinputFile, 'r') as input_f:
             try:
                 starttime = time.time()
-                subprocess.run(['python', solutionFile], stdin=input_f, stdout=output_f, timeout=5)
+                subprocess.run(['python', solutionFile], stdin=input_f, stdout=output_f, timeout=TIME_LIMIT)
                 endtime = time.time()
                 print(f' Time: {endtime - starttime:.4f} seconds')
             except subprocess.TimeoutExpired:
-                print("Time limit exceeded 5 seconds! Try others solution or optimize your code!")
+                print(f"Time limit exceeded {TIME_LIMIT} seconds! Try others solution or optimize your code!")
                 exit(1)
         
