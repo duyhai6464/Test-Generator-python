@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 
 problem_folder_path = os.path.dirname(os.path.abspath(__file__))
-problem_name = r'ROTATEXT' # problem name, used to find solution file and test files
+problem_name = r'TREECOVER' # problem name, used to find solution file and test files
 # problem_name = r'X' # problem name, used to find solution file and test files
 IS_BRUTE_FORCE = 0
 TIME_LIMIT = 4 # seconds
