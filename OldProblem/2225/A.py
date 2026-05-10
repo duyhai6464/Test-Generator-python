@@ -13,13 +13,13 @@ def read():
     return res
 
 
-def pre_run():
-    pass
-
 def run():
-    x1, x2 = read(), read()
+    x, y = read(), read()
+    z = y - x
+    if y % z != 0:
+        return "Yes"
+    return "No"
 
-pre_run()
 t = read()
 for _ in range(t):
     out.append(str(run()))

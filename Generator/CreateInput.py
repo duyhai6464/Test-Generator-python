@@ -2,9 +2,11 @@ import sys
 import random
 
 
-def randInt(a, b):
-    if int(a) > int(b): a, b = b, a
-    return random.randint(int(a), int(b))
+def rand(a, b=None):
+    if b == None:
+        a, b = 0, a
+    if int(a) > int(b): a, b = int(b), int(a)
+    return random.randint(a, b)
 
 
 def randBitInt(bits):
@@ -44,48 +46,47 @@ def Shuffle(array):
 
 
 def example():
-    n = randInt(5e3, 1e4)
-    q = randInt(5e3, 1e4)
+    n = rand(5e3, 1e4)
+    q = rand(5e3, 1e4)
     print(n, q)
     for _ in range(q):
-        query_type = randInt(0, 1) if _ != q - 1 else 1
-        l = randInt(1, n)
-        r = randInt(l, n)
+        query_type = rand(0, 1) if _ != q - 1 else 1
+        l = rand(1, n)
+        r = rand(l, n)
         if query_type == 1:
             print(query_type, l, r)
         else:
-            x = randInt(-1e3, 1e3)
+            x = rand(-1e3, 1e3)
             print(query_type, l, r, x)
 
 def check_time_limit():
-    n = randInt(1e5, 2e5)
-    q = randInt(1e5, 2e5)
+    n = rand(1e5, 2e5)
+    q = rand(1e5, 2e5)
     print(n, q)
     for _ in range(q):
-        query_type = randInt(0, 1) if _ != q - 1 else 1
-        l = randInt(1, n // 10)
-        r = randInt(9 * n // 10, n)
+        query_type = rand(0, 1) if _ != q - 1 else 1
+        l = rand(1, n // 10)
+        r = rand(9 * n // 10, n)
         if query_type == 1:
             print(query_type, l, r)
         else:
-            x = randInt(-1e9, 1e9)
+            x = rand(-1e9, 1e9)
             print(query_type, l, r, x)
 
 def hard_test_case():
-    n = 2 * 10 ** 5
-    q = 2 * 10 ** 5
+    n = int(2e5)
+    q = int(2e5)
     print(n, q)
-    last_l, last_r = 1, n
     for _ in range(q):
-        l = randInt(last_l, last_r)
-        r = randInt(l, (l + n // 2) % n + 1)
-        if l > r: l, r = r, l
-        last_l, last_r = l, r
-        if _ % 2:
-            print(1, l, r)
+        query_type = 0 if _ % 2 else 1
+        l = rand(1, n // 10)
+        r = rand(9 * n // 10, n)
+        if query_type == 1:
+            print(query_type, l, r)
         else:
-            x = randInt(-1e9, 1e9)
-            print(0, l, r, x)
+            x = rand(-1e9, 1e9)
+            print(query_type, l, r, x)
+        
 
 def generate_test_cases(func):
     """
@@ -102,7 +103,32 @@ def generate_test_cases(func):
         func()# Generate the test case
         sys.stdout = sys.__stdout__
 
-test_case_index = 2
+def generate_input(func, genpath):
+    with open(genpath, 'w') as FileOutput:
+        print(f'Generating input to {genpath}.')
+        sys.stdout = FileOutput
+        func()# Generate the test case
+        sys.stdout = sys.__stdout__
+
+def sample_test():
+    t = 10
+    for _ in range(t):
+        n, c, q = 20, 5, 10
+        print(n, c, q)
+        for _C_ in range(2):
+            S = [rand(c - 1) for i in range(n)]
+            print(''.join(chr(x + ord('a'))for x in S))
+        for i in range(q):
+            qrt = rand(1, 3)
+            if qrt == 3:
+                print(qrt, rand(1, n))
+            else:
+                l, r = rand(1, n), rand(1, n)
+                if l > r: l, r = r, l
+                print(qrt, l, r, rand(c))
+        print("EOF")
+
+test_case_index = 100
 if __name__ == '__main__':
     while test_case_index < 3:
         generate_test_cases(example)
@@ -113,4 +139,4 @@ if __name__ == '__main__':
     while test_case_index < 7:
         generate_test_cases(hard_test_case)
         test_case_index += 1
-    
+    generate_input(sample_test, 'gen.in')
