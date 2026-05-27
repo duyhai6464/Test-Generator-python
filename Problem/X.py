@@ -1,41 +1,78 @@
 import sys
 
-def debug(*x, **y): print(*x, file=sys.stderr, **y)
-buffer:list[str] = sys.stdin.read().split()
-ptr, out = 0, []
-def read(t: type = int):
-    global ptr, buffer
-    while ptr >= len(buffer): buffer.extend(sys.stdin.readline().split())
-    ptr += 1
-    return t(buffer[ptr - 1])
+def debug(*x, **y): print('---', *x, file=sys.stderr, **y)
 
-sys.setrecursionlimit(int(1e6))
+arr = [0, 1, 5, 2, 6, 4, 9, 3, 7, 8]
+p = [3, 1, 2, 3, 4]
+meme: dict[tuple, int] = {}
 
-def update(A, l, r, x):
-    for i in range(l - 1, r):
-        A[i] = (A[i] + x) % c
-    debug(l, r, x)
-    debug(A)
+def ask(i, j):
+    if i == j: return 0
+    if (i, j) in meme: return meme[(i, j)]
+    if (j, i) in meme: return 1 - meme[(j, i)]
+    arr[0] += 1
+    print('?', i, j, flush=True)
+    if sys.stdin.isatty():
+        meme[(i, j)] = 1 if arr[i] > arr[j] else 0
+    else:
+        meme[(i, j)] = int(input())
+    return meme[(i, j)]
 
-def run():
-    query_t = read()
-    if query_t != 3:
-        l, r, x = read(), read(), read()
-        if query_t == 1:
-            return update(S, l, r, x)
-        return update(T, l, r, x)
-    l = read()
-    for i in range(l - 1, n):
-        if S[i] != T[i]:
-            if S[i] > T[i]: return '>'
-            return '<'
-    return '='
+def answer(x):
+    print('!', x, 1, flush=True)
 
+def read():
+    if sys.stdin.isatty(): return p.pop()
+    return int(input())
 
-n, c, q = read(), read(), read()
-S, T = [ord(x) - ord('a') for x in read(str)], [ord(x) - ord('a') for x in read(str)]
-for _ in range(q):
-    output = run()
-    if output != None: out.append(output)
+class SegmentTree: # by domigo
+    def __init__(self, n: int):
+        self.n = n # dùng khi cần truy vấn đoạn liên tiếp chính xác 
+        self.tree = [-1] * (self.n << 2)
+
+    def _build(self, node, start, end, data, l):
+        if l > end or l + len(data) - 1 < start: return
+        if start == end: self.tree[node] = data[start-l]; return
+        mid = (start + end) >> 1
+        ln, rn = node << 1, node << 1 | 1
+        self._build(ln, start, mid, data, l)
+        self._build(rn, mid + 1, end, data, l)
+        self.tree[node] = self.__calc(self.tree[ln], self.tree[rn])
+
+    def build(self, data, l):
+        self._build(1, 1, self.n, data, l)
     
-sys.stdout.write("\n".join(map(str, out)))
+    def _delete(self, node, start, end, val):
+        if start == end and self.tree[node] == val:
+            self.tree[node] = -1
+            return
+        mid = (start + end) >> 1
+        ln, rn = node << 1, node << 1 | 1
+        if self.tree[ln] == val:
+            self._delete(ln, start, mid, val)
+        elif self.tree[rn] == val:
+            self._delete(rn, mid + 1, end, val)
+        self.tree[node] = self.__calc(self.tree[ln], self.tree[rn])
+    
+    def delete(self, val: int):
+        self._delete(1, 1, self.n, val)
+
+
+    def __calc(self, left, right):# define logic here
+        if left == -1: return right
+        if right == -1: return left
+        return right if ask(left, right) else left
+
+def solve():
+    n = read()
+    a = SegmentTree(2048)
+    l = 1
+    for q in range(n):
+        x = read()
+        a.build(list(range(l, l + x)), l)
+        l += x
+        idx = a.tree[1]
+        answer(idx)
+        # debug(arr[0])
+        if q != n - 1: a.delete(idx)
+solve()

@@ -1,10 +1,10 @@
-import os
+import os 
 import subprocess
 import time
 from pathlib import Path
 
 problem_folder_path = os.path.dirname(os.path.abspath(__file__))
-problem_name = r'TREECOVER' # problem name, used to find solution file and test files
+problem_name = r'pine' # problem name, used to find solution file and test files
 # problem_name = r'X' # problem name, used to find solution file and test files
 IS_BRUTE_FORCE = 0
 TIME_LIMIT = 4 # seconds
@@ -22,20 +22,19 @@ with open(input_path, 'r') as f:
     INPUT: list[str] = f.read().split("EOF\n")
 INPUT = [i for i in INPUT if i.strip()]
 OUTPUT_EXPECTED = open(output_path, 'r')
-LOG_OUT, LOG_ERR, NOT_PASS = [], [], []
+LOG_OUT, LOG_ERR, NOT_PASS, RUNTIME = [], [], [], []
 for TEST in range(1, len(INPUT) + 1):
     start_time = time.time()
     out = subprocess.run(['python', solution_path], input=INPUT[TEST - 1], 
                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=TIME_LIMIT)
-    end = time.time()
+    RUNTIME.append(time.time() - start_time)
     if out.returncode != 0:
         print("Runtime error:", out.stderr)
         exit(1)
-    print(f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     print(f"<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
     print(f">>>TEST:{TEST}>>>STDERR>>>:\n{out.stderr.strip()}")
     print(f">>>TEST:{TEST}>>>STDOUT>>>\n{out.stdout.strip()}")
-    print(f"Time: {end - start_time:.2f} seconds")
+    print(f"Time: {RUNTIME[-1]:.2f} seconds")
     LOG_ERR.append(out.stderr.strip())
     LOG_OUT.append(out.stdout.strip())
     if IS_BRUTE_FORCE: continue
@@ -45,7 +44,7 @@ for TEST in range(1, len(INPUT) + 1):
         output_lines = out.stdout.strip().split('\n')
         for i in range(len(output_lines)):
             expected_line = OUTPUT_EXPECTED.readline().strip()
-            if output_lines[i] != expected_line:
+            if output_lines[i].strip() != expected_line:
                 print("Wrong Answer")
                 print(f"First difference at line {i+1}:")
                 print(f"Output: {output_lines[i]} || Expected: {expected_line}")
@@ -112,8 +111,8 @@ if len(NOT_PASS) == 0:
 ROOT = Path(__file__).resolve().parent
 with open(ROOT / "log.txt", 'w') as l:
     l.write('\n'.join(LOG_OUT))
-    l.write('\n>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<\n')
+    l.write('\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n')
     l.write('\n'.join(LOG_ERR))
 
-print(f"PASS: {len(INPUT) - len(NOT_PASS)}")
-print(f"NOT PASS: {NOT_PASS}")
+print(f"PASS: {len(INPUT) - len(NOT_PASS)} | NOT PASS: {NOT_PASS}")
+print(f"BEST TIME: {min(RUNTIME):.2f} WORST TIME: {max(RUNTIME):.2f}")

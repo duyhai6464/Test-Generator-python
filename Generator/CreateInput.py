@@ -111,22 +111,14 @@ def generate_input(func, genpath):
         sys.stdout = sys.__stdout__
 
 def sample_test():
-    t = 10
-    for _ in range(t):
-        n, c, q = 20, 5, 10
-        print(n, c, q)
-        for _C_ in range(2):
-            S = [rand(c - 1) for i in range(n)]
-            print(''.join(chr(x + ord('a'))for x in S))
-        for i in range(q):
-            qrt = rand(1, 3)
-            if qrt == 3:
-                print(qrt, rand(1, n))
-            else:
-                l, r = rand(1, n), rand(1, n)
-                if l > r: l, r = r, l
-                print(qrt, l, r, rand(c))
+    for _ in range(10):
+        n = 10
+        print(n)
+        print(' '.join(map(str, [rand(1, 10) for _ in range(n)])))
+        print(' '.join(map(str, [rand(1, 10) for _ in range(n)])))
+        print(rand(n * 5, n * 10))
         print("EOF")
+
 
 test_case_index = 100
 if __name__ == '__main__':
@@ -140,3 +132,4 @@ if __name__ == '__main__':
         generate_test_cases(hard_test_case)
         test_case_index += 1
     generate_input(sample_test, 'gen.in')
+    # generate_input(sample_test_out, 'gen.out')

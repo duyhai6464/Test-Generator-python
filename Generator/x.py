@@ -1,4 +1,4 @@
-import bisect, numpy
+import bisect, numpy, time
 
 def is_c(n):
     for i in range(2, int(n ** 0.5) + 1):
@@ -14,12 +14,7 @@ def is_c(n):
 # print(len(p))
 
 # a = numpy.zeros((4, 2, 3), dtype=int)
-a = numpy.array(range(24), dtype=int)
-a = a.reshape((4, 2, 3))
 
-print(a)
-print()
-print(a[1][1])
-print(a[1][1][-1:])
-print(a[1][1][:-1])
-print(a[1][1][-1:] + a[1][1][:-1])
+d = [(dx, dy) for dx in range(-1, 2) for dy in range(-1, 2) if not (dx == dy == 0)]
+
+print(len(d), d)
